@@ -15,7 +15,7 @@ model = dict(
         patch_norm=True,
         pretrain_style='official'),
     decode_head=dict(in_channels=[128, 256, 512, 1024], num_classes=2),
-    auxiliary_head=dict(in_channels=512, num_classes=2)
+    auxiliary_head=dict(in_channels=512, num_classes=3)
 )
 
 # AdamW optimizer, no weight decay for position embedding & layer norm

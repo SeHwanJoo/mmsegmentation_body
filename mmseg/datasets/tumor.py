@@ -19,10 +19,9 @@ class TumorDataset(CustomDataset):
     The ``img_suffix`` is fixed to '.jpg' and ``seg_map_suffix`` is fixed to
     '.png'.
     """
-    CLASSES = (
-        'kidney', 'tumor')
+    CLASSES = ('background', 'kidney', 'tumor')
 
-    PALETTE = [[1, 0, 0], [2, 0, 0]]
+    PALETTE = [[0, 0, 0], [1, 0, 0], [2, 0, 0]]
 
     def __init__(self, **kwargs):
         super(TumorDataset, self).__init__(
