@@ -67,7 +67,10 @@ class LoadImageFromFile(object):
         results['filename'] = filename
         results['ori_filename'] = results['img_info']['filename']
         results['img'] = img
-        results['img_shape'] = img.shape
+        try:
+            results['img_shape'] = img.shape
+        except AttributeError:
+            print(filename)
         results['ori_shape'] = img.shape
         # Set initial values for default meta_keys
         results['pad_shape'] = img.shape
