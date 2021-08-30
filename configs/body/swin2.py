@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/upernet_swin_BN.py', 'tumor_dataset.py',
+    '../_base_/models/upernet_swin_BN.py', 'dataset.py',
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_20k.py'
 ]
 model = dict(
@@ -14,15 +14,26 @@ model = dict(
         drop_path_rate=0.3,
         patch_norm=True,
         pretrain_style='official'),
-    decode_head=dict(in_channels=[96, 192, 384, 768], num_classes=3),
-    auxiliary_head=dict(in_channels=384, num_classes=3))
+    decode_head=dict(
+        in_channels=[96, 192, 384, 768], 
+        num_classes=3,
+        loss_decode=dict(
+            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0, class_weight=[0.2, 0.3, 0.5])
+        ),
+    auxiliary_head=dict(
+        in_channels=384, 
+        num_classes=3,
+        loss_decode=dict(
+            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4, class_weight=[0.2, 0.3, 0.5])
+        )
+    )
 
 # AdamW optimizer, no weight decay for position embedding & layer norm
 # in backbone
 optimizer = dict(
     _delete_=True,
     type='AdamW',
-    lr=0.0001,
+    lr=0.00008,
     betas=(0.9, 0.999),
     weight_decay=0.01,
     paramwise_cfg=dict(
@@ -42,4 +53,4 @@ lr_config = dict(
 
 # By default, models are trained on 8 GPUs with 2 images per GPU
 data = dict(samples_per_gpu=8)
-checkpoint_config = dict(max_keep_ckpts=1)
+checkpoint_config = dict(max_keep_ckpts=5)

@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/deeplabv3_unet_s5-d16.py', './dataset.py',
+    '../_base_/models/deeplabv3_unet_s5-d16.py', './dataset1.py',
     '../_base_/default_runtime.py', './schedule_20k.py'
 ]
 norm_cfg = dict(type='BN', requires_grad=True)
@@ -34,10 +34,12 @@ model = dict(
     decode_head=dict(
         in_channels=768,
         in_index=3,
+        num_classes=3,
         channels=512,),
     auxiliary_head=dict(
         in_channels=384,
         in_index=2,
+        num_classes=3,
         channels=256),
     test_cfg=dict(crop_size=(512, 512), stride=(340, 340))
     )
@@ -56,25 +58,21 @@ optimizer = dict(
             'norm': dict(decay_mult=0.)
         }))
 
-# lr_config = dict(
-#     _delete_=True,
-#     policy='cyclic',
-#     target_ratio=(1, 0.01),
-#     cyclic_times=1,
-#     step_ratio_up=0.05)
-
 lr_config = dict(
     _delete_=True,
-    policy='poly',
-    warmup='linear',
-    warmup_iters=400,
-    warmup_ratio=1e-6,
-    power=1.0,
-    min_lr=0.0,
-    by_epoch=False)
+    policy='cyclic',
+    target_ratio=(1, 0.01),
+    cyclic_times=1,
+    step_ratio_up=0.05)
 
-runner = dict(_delete_=True, type='IterBasedRunner', max_iters=60000)
-checkpoint_config = dict(_delete_=True, by_epoch=False, interval=600, max_keep_ckpts=3)
+# lr_config = dict(
+#     _delete_=True,
+#     policy='poly',
+#     warmup='linear',
+#     warmup_iters=400,
+#     warmup_ratio=1e-6,
+#     power=1.0,
+#     min_lr=0.0)
 
 # lr_config = dict(
 #     _delete_=True,
@@ -84,6 +82,7 @@ checkpoint_config = dict(_delete_=True, by_epoch=False, interval=600, max_keep_c
 #     warmup_ratio=1e-6,
 #     step=[60, 90])
 
-evaluation = dict(interval=600, metric='mDice')
+evaluation = dict(metric='mDice')
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
+checkpoint_config = dict(max_keep_ckpts=3)

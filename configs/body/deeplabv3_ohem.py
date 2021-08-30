@@ -34,11 +34,13 @@ model = dict(
     decode_head=dict(
         in_channels=768,
         in_index=3,
-        channels=512,),
+        channels=512,
+        sampler=dict(type='OHEMPixelSampler', thresh=0.8, min_kept=100000)),
     auxiliary_head=dict(
         in_channels=384,
         in_index=2,
-        channels=256),
+        channels=256,
+        sampler=dict(type='OHEMPixelSampler', thresh=0.8, min_kept=100000)),
     test_cfg=dict(crop_size=(512, 512), stride=(340, 340))
     )
 
@@ -56,34 +58,16 @@ optimizer = dict(
             'norm': dict(decay_mult=0.)
         }))
 
-# lr_config = dict(
-#     _delete_=True,
-#     policy='cyclic',
-#     target_ratio=(1, 0.01),
-#     cyclic_times=1,
-#     step_ratio_up=0.05)
-
 lr_config = dict(
     _delete_=True,
-    policy='poly',
-    warmup='linear',
-    warmup_iters=400,
-    warmup_ratio=1e-6,
-    power=1.0,
-    min_lr=0.0,
-    by_epoch=False)
+    policy='cyclic',
+    target_ratio=(1, 0.01),
+    cyclic_times=1,
+    step_ratio_up=0.05)
 
-runner = dict(_delete_=True, type='IterBasedRunner', max_iters=60000)
-checkpoint_config = dict(_delete_=True, by_epoch=False, interval=600, max_keep_ckpts=3)
-
-# lr_config = dict(
-#     _delete_=True,
-#     policy='step',
-#     warmup='linear',
-#     warmup_iters=400,
-#     warmup_ratio=1e-6,
-#     step=[60, 90])
-
-evaluation = dict(interval=600, metric='mDice')
+evaluation = dict(metric='mDice')
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
+checkpoint_config = dict(max_keep_ckpts=3)
+
+load_from = 'work_dirs/deeplabv3_unet_s5-d16_256x256_40k_hrf/epoch_10.pth'

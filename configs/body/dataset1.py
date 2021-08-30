@@ -7,7 +7,7 @@ crop_size = (512, 512)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    # dict(type='Resize', img_scale=(512, 512), ratio_range=(0.5, 2.0)),
+    dict(type='Resize', img_scale=(256, 256), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
@@ -38,18 +38,18 @@ data = dict(
     train=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir=['train_pre/fold1', 'train_pre/fold2', 'train_pre/fold3'],
-        ann_dir=['train_label/fold1', 'train_label/fold2', 'train_label/fold3'],
+        img_dir=['train_pre/fold0', 'train_pre/fold2', 'train_pre/fold3'],
+        ann_dir=['train_label/fold0', 'train_label/fold2', 'train_label/fold3'],
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='train_pre/fold0',
-        ann_dir='train_label/fold0',
+        img_dir='train_pre/fold1',
+        ann_dir='train_label/fold1',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='train_pre/fold0',
-        ann_dir='train_label/fold0',
+        img_dir='train_pre/fold1',
+        ann_dir='train_label/fold1',
         pipeline=test_pipeline))

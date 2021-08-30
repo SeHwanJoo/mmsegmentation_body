@@ -7904,3 +7904,11 @@ after_val_epoch:
 | 99.77 | 81.8 | 85.72 | 88.88 |
 +-------+------+-------+-------+
 2021-08-26 03:57:57,183 - mmseg - INFO - Iter(val) [1600]	aAcc: 0.9977, mIoU: 0.8180, mAcc: 0.8572, mDice: 0.8888, IoU.background: 0.9984, IoU.kidney: 0.8791, IoU.tumor: 0.5766, Acc.background: 0.9994, Acc.kidney: 0.9452, Acc.tumor: 0.6269, Dice.background: 0.9992, Dice.kidney: 0.9357, Dice.tumor: 0.7314
+libpng warning: bKGD: invalid
+libpng warning: bKGD: invalid
+libpng warning: bKGD: invalid
+libpng warning: bKGD: invalid
+libpng warning: bKGD: invalid
+libpng warning: bKGD: invalid
+libpng warning: bKGD: invalid
+libpng warning: bKGD: invalid

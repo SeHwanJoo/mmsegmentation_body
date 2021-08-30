@@ -31,22 +31,31 @@ model = dict(
         act_cfg=dict(type='GELU'),
         norm_cfg=backbone_norm_cfg,
         pretrain_style='official'),
-    decode_head=dict(
+     decode_head=dict(
         in_channels=768,
         in_index=3,
-        channels=512,),
+        channels=512,
+        num_classes=3,
+        loss_decode=dict(
+            type='BCEDiceLoss', use_sigmoid=False, loss_weight=1.0, bce_weight=0.8)
+        ),
+
     auxiliary_head=dict(
         in_channels=384,
         in_index=2,
-        channels=256),
-    test_cfg=dict(crop_size=(512, 512), stride=(340, 340))
+        num_classes=3,
+        channels=256,
+        loss_decode=dict(
+            type='BCEDiceLoss', use_sigmoid=False, loss_weight=0.4, bce_weight=0.8)
+        ),
+    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(340, 340))
     )
 
 # in backbone
 optimizer = dict(
     _delete_=True,
     type='AdamW',
-    lr=0.00006,
+    lr=0.00001,
     betas=(0.9, 0.999),
     weight_decay=0.01,
     paramwise_cfg=dict(
@@ -70,11 +79,7 @@ lr_config = dict(
     warmup_iters=400,
     warmup_ratio=1e-6,
     power=1.0,
-    min_lr=0.0,
-    by_epoch=False)
-
-runner = dict(_delete_=True, type='IterBasedRunner', max_iters=60000)
-checkpoint_config = dict(_delete_=True, by_epoch=False, interval=600, max_keep_ckpts=3)
+    min_lr=0.0)
 
 # lr_config = dict(
 #     _delete_=True,
@@ -84,6 +89,7 @@ checkpoint_config = dict(_delete_=True, by_epoch=False, interval=600, max_keep_c
 #     warmup_ratio=1e-6,
 #     step=[60, 90])
 
-evaluation = dict(interval=600, metric='mDice')
+evaluation = dict(metric='mDice')
 optimizer_config = dict(
-    _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
+    _delete_=True, grad_clip=dict(max_norm=5, norm_type=2))
+checkpoint_config = dict(max_keep_ckpts=3)

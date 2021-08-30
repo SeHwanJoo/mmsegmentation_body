@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/upernet_swin.py', 'dataset.py',
+    '../_base_/models/upernet_swin.py', 'dataset_full.py',
     '../_base_/default_runtime.py', '../_base_/schedules/schedule_20k.py'
 ]
 model = dict(
@@ -23,7 +23,7 @@ model = dict(
 optimizer = dict(
     _delete_=True,
     type='AdamW',
-    lr=0.00006,
+    lr=0.00008,
     betas=(0.9, 0.999),
     weight_decay=0.01,
     paramwise_cfg=dict(
@@ -40,24 +40,7 @@ lr_config = dict(
     cyclic_times=1,
     step_ratio_up=0.05)
 
-# lr_config = dict(
-#     _delete_=True,
-#     policy='poly',
-#     warmup='linear',
-#     warmup_iters=400,
-#     warmup_ratio=1e-6,
-#     power=1.0,
-#     min_lr=0.0)
+# By default, models are trained on 8 GPUs with 2 images per GPU
+data = dict(samples_per_gpu=4)
 
-# lr_config = dict(
-#     _delete_=True,
-#     policy='step',
-#     warmup='linear',
-#     warmup_iters=400,
-#     warmup_ratio=1e-6,
-#     step=[60, 90])
-
-evaluation = dict(metric='mDice')
-optimizer_config = dict(
-    _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
-checkpoint_config = dict(max_keep_ckpts=3)
+checkpoint_config = dict(max_keep_ckpts=5)

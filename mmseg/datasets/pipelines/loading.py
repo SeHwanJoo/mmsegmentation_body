@@ -109,12 +109,16 @@ class LoadAnnotations(object):
                  reduce_zero_label=False,
                  file_client_args=dict(backend='disk'),
                  imdecode_backend='pillow',
-                 tumor=True):
+                 ignore_index=[],
+                 tumor=False,
+                 center_crop=False):
         self.reduce_zero_label = reduce_zero_label
         self.file_client_args = file_client_args.copy()
         self.file_client = None
         self.imdecode_backend = imdecode_backend
+        self.ignore_index = ignore_index
         self.tumor = tumor
+        self.center_crop = center_crop
 
     def __call__(self, results):
         """Call function to load multiple types annotations.
@@ -143,8 +147,12 @@ class LoadAnnotations(object):
             for old_id, new_id in results['label_map'].items():
                 gt_semantic_seg[gt_semantic_seg == old_id] = new_id
         # reduce zero_label
-        if not self.tumor:
+        if self.tumor:
             gt_semantic_seg[gt_semantic_seg == 2] = 1
+        for index in self.ignore_index:
+            gt_semantic_seg[gt_semantic_seg == index] = 255
+            gt_semantic_seg[gt_semantic_seg > index] -= 1
+            gt_semantic_seg[gt_semantic_seg == 254] = 255
         if self.reduce_zero_label:
             # avoid using underflow conversion
             gt_semantic_seg[gt_semantic_seg == 0] = 255
