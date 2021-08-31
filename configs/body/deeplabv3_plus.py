@@ -94,4 +94,4 @@ lr_config = dict(
 evaluation = dict(metric='mDice')
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=5, norm_type=2))
-checkpoint_config = dict(max_keep_ckpts=3)
+checkpoint_config = dict(max_keep_ckpts=10)

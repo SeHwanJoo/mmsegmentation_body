@@ -4,6 +4,6 @@ optimizer_config = dict()
 # learning policy
 lr_config = dict(policy='poly', power=0.9, min_lr=1e-4, by_epoch=False)
 # runtime settings
-runner = dict(type='EpochBasedRunner', max_epochs=10)
+runner = dict(type='EpochBasedRunner', max_epochs=50)
 checkpoint_config = dict(interval=1)
 evaluation = dict(interval=1, metric=['mIoU', 'mDice'])
