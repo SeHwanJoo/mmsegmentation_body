@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/deeplabv3_unet_s5-d16.py', './dataset1.py',
+    '../_base_/models/deeplabv3_unet_s5-d16.py', './dataset.py',
     '../_base_/default_runtime.py', './schedule_20k.py'
 ]
 norm_cfg = dict(type='BN', requires_grad=True)
@@ -31,17 +31,24 @@ model = dict(
         act_cfg=dict(type='GELU'),
         norm_cfg=backbone_norm_cfg,
         pretrain_style='official'),
-    decode_head=dict(
+     decode_head=dict(
         in_channels=768,
         in_index=3,
+        channels=512,
         num_classes=3,
-        channels=512,),
+        loss_decode=dict(
+            _delete_=True, type='FocalDiceLoss', loss_weight=1.0, focal_weight=0.75)
+        ),
+
     auxiliary_head=dict(
         in_channels=384,
         in_index=2,
         num_classes=3,
-        channels=256),
-    test_cfg=dict(crop_size=(512, 512), stride=(340, 340))
+        channels=256,
+        loss_decode=dict(
+            _delete_=True, type='FocalLoss', loss_weight=0.4, focal_weight=0.75)
+        ),
+    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(340, 340))
     )
 
 # in backbone
@@ -58,12 +65,12 @@ optimizer = dict(
             'norm': dict(decay_mult=0.)
         }))
 
-lr_config = dict(
-    _delete_=True,
-    policy='cyclic',
-    target_ratio=(1, 0.01),
-    cyclic_times=1,
-    step_ratio_up=0.05)
+# lr_config = dict(
+#     _delete_=True,
+#     policy='cyclic',
+#     target_ratio=(1, 0.01),
+#     cyclic_times=1,
+#     step_ratio_up=0.05)
 
 # lr_config = dict(
 #     _delete_=True,
@@ -74,15 +81,16 @@ lr_config = dict(
 #     power=1.0,
 #     min_lr=0.0)
 
-# lr_config = dict(
-#     _delete_=True,
-#     policy='step',
-#     warmup='linear',
-#     warmup_iters=400,
-#     warmup_ratio=1e-6,
-#     step=[60, 90])
+lr_config = dict(
+    _delete_=True,
+    policy='step',
+    warmup='linear',
+    warmup_iters=400,
+    warmup_ratio=1e-6,
+    step=[30, 45])
 
 evaluation = dict(metric='mDice')
 optimizer_config = dict(
-    _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
+    _delete_=True, grad_clip=dict(max_norm=5, norm_type=2))
 checkpoint_config = dict(max_keep_ckpts=3)
+# runner = dict(type='EpochBasedRunner', max_epochs=10)

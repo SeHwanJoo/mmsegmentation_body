@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'TumorDataset'
-data_root = '../fold/fold'
+data_root = '../fold'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 crop_size = (512, 512)
@@ -38,18 +38,18 @@ data = dict(
     train=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir=['train_pre/fold1', 'train_pre/fold2', 'train_pre/fold3'],
+        img_dir=['train/fold1', 'train/fold2', 'train/fold3'],
         ann_dir=['train_label/fold1', 'train_label/fold2', 'train_label/fold3'],
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='train_pre/fold0',
+        img_dir='train/fold0',
         ann_dir='train_label/fold0',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='train_pre/fold0',
+        img_dir='train/fold0',
         ann_dir='train_label/fold0',
         pipeline=test_pipeline))

@@ -37,7 +37,7 @@ model = dict(
         channels=512,
         num_classes=3,
         loss_decode=dict(
-            type='BCEDiceLoss', use_sigmoid=False, loss_weight=1.0, bce_weight=0.8)
+            _delete_=True, type='FocalLoss', loss_weight=1.0)
         ),
 
     auxiliary_head=dict(
@@ -46,7 +46,7 @@ model = dict(
         num_classes=3,
         channels=256,
         loss_decode=dict(
-            type='BCEDiceLoss', use_sigmoid=False, loss_weight=0.4, bce_weight=0.8)
+            _delete_=True, type='FocalLoss', loss_weight=0.4)
         ),
     test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(340, 340))
     )
@@ -55,7 +55,7 @@ model = dict(
 optimizer = dict(
     _delete_=True,
     type='AdamW',
-    lr=0.00001,
+    lr=0.00006,
     betas=(0.9, 0.999),
     weight_decay=0.01,
     paramwise_cfg=dict(
@@ -72,24 +72,25 @@ optimizer = dict(
 #     cyclic_times=1,
 #     step_ratio_up=0.05)
 
-lr_config = dict(
-    _delete_=True,
-    policy='poly',
-    warmup='linear',
-    warmup_iters=400,
-    warmup_ratio=1e-6,
-    power=1.0,
-    min_lr=0.0)
-
 # lr_config = dict(
 #     _delete_=True,
-#     policy='step',
+#     policy='poly',
 #     warmup='linear',
 #     warmup_iters=400,
 #     warmup_ratio=1e-6,
-#     step=[60, 90])
+#     power=1.0,
+#     min_lr=0.0)
+
+lr_config = dict(
+    _delete_=True,
+    policy='step',
+    warmup='linear',
+    warmup_iters=400,
+    warmup_ratio=1e-6,
+    step=[30, 45])
 
 evaluation = dict(metric='mDice')
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=5, norm_type=2))
 checkpoint_config = dict(max_keep_ckpts=3)
+# runner = dict(type='EpochBasedRunner', max_epochs=10)
