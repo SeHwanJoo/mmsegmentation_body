@@ -19,14 +19,14 @@ model = dict(
         in_channels=[128, 256, 512, 1024],
         num_classes=3,
         loss_decode=dict(
-            _delete_=True, type='LovaszLoss', loss_weight=1.0, per_image=True)
+            _delete_=True, type='FocalDiceLoss', loss_weight=1.0, focal_weight=0.75)
             # type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0, class_weight=[0.25, 0.25, 0.5])
         ),
     auxiliary_head=dict(
         in_channels=512,
         num_classes=3,
         loss_decode=dict(
-            _delete_=True, type='LovaszLoss', loss_weight=0.4, per_image=True)
+            _delete_=True, type='FocalDiceLoss', loss_weight=0.4, focal_weight=0.75)
             # type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4, class_weight=[0.25, 0.25, 0.5])
         )
     )

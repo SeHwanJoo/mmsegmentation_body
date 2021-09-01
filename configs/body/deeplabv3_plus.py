@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/deeplabv3_unet_s5-d16.py', './dataset.py',
+    '../_base_/models/deeplabv3plus_r50-d8.py', './dataset.py',
     '../_base_/default_runtime.py', './schedule_20k.py'
 ]
 norm_cfg = dict(type='BN', requires_grad=True)
@@ -31,14 +31,19 @@ model = dict(
         act_cfg=dict(type='GELU'),
         norm_cfg=backbone_norm_cfg,
         pretrain_style='official'),
-     decode_head=dict(
+    decode_head=dict(
+        type='DepthwiseSeparableASPPHead',
         in_channels=768,
         in_index=3,
         channels=512,
+        dilations=(1, 12, 24, 36),
+        c1_in_channels=96,
+        c1_channels=48,
+        dropout_ratio=0.1,
         num_classes=3,
+        align_corners=False,
         loss_decode=dict(
-            _delete_=True, type='LovaszLoss', loss_weight=1.0, per_image=True)
-            # type='BCEDiceLoss', use_sigmoid=False, loss_weight=1.0, bce_weight=1.0)
+            _delete_=True, type='FocalDiceLoss', loss_weight=1.0, focal_weight=0.75)
         ),
 
     auxiliary_head=dict(
@@ -47,10 +52,9 @@ model = dict(
         num_classes=3,
         channels=256,
         loss_decode=dict(
-            _delete_=True, type='LovaszLoss', loss_weight=0.4, per_image=True)
-            # type='BCEDiceLoss', use_sigmoid=False, loss_weight=0.4, bce_weight=1.0)
+            _delete_=True, type='FocalDiceLoss', loss_weight=0.4, focal_weight=0.75)
         ),
-    test_cfg=dict(mode='slide', crop_size=(512, 512), stride=(340, 340))
+    test_cfg=dict(mode='wwhole')
     )
 
 # in backbone
@@ -74,24 +78,25 @@ optimizer = dict(
 #     cyclic_times=1,
 #     step_ratio_up=0.05)
 
-lr_config = dict(
-    _delete_=True,
-    policy='poly',
-    warmup='linear',
-    warmup_iters=400,
-    warmup_ratio=1e-6,
-    power=1.0,
-    min_lr=0.0)
-
 # lr_config = dict(
 #     _delete_=True,
-#     policy='step',
+#     policy='poly',
 #     warmup='linear',
 #     warmup_iters=400,
 #     warmup_ratio=1e-6,
-#     step=[60, 90])
+#     power=1.0,
+#     min_lr=0.0)
+
+lr_config = dict(
+    _delete_=True,
+    policy='step',
+    warmup='linear',
+    warmup_iters=400,
+    warmup_ratio=1e-6,
+    step=[30, 45])
 
 evaluation = dict(metric='mDice')
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=5, norm_type=2))
-checkpoint_config = dict(max_keep_ckpts=10)
+checkpoint_config = dict(max_keep_ckpts=3)
+# runner = dict(type='EpochBasedRunner', max_epochs=10)
