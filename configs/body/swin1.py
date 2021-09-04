@@ -20,23 +20,21 @@ model = dict(
         num_classes=3,
         loss_decode=dict(
             _delete_=True, type='FocalDiceLoss', loss_weight=1.0, focal_weight=0.75)
-            # type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0, class_weight=[0.25, 0.25, 0.5])
         ),
     auxiliary_head=dict(
         in_channels=512,
         num_classes=3,
         loss_decode=dict(
             _delete_=True, type='FocalDiceLoss', loss_weight=0.4, focal_weight=0.75)
-            # type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4, class_weight=[0.25, 0.25, 0.5])
-        )
+        ),
     )
 
 # AdamW optimizer, no weight decay for position embedding & layer norm
 # in backbone
 optimizer = dict(
     _delete_=True,
-    type='AdamW',
-    lr=0.00006,
+    type='Adam',
+    lr=0.006,
     betas=(0.9, 0.999),
     weight_decay=0.01,
     paramwise_cfg=dict(
@@ -64,4 +62,4 @@ lr_config = dict(
 
 # By default, models are trained on 8 GPUs with 2 images per GPU
 data = dict(samples_per_gpu=8)
-checkpoint_config = dict(max_keep_ckpts=5)
+checkpoint_config = dict(max_keep_ckpts=3)

@@ -52,9 +52,9 @@ model = dict(
         num_classes=3,
         channels=256,
         loss_decode=dict(
-            _delete_=True, type='FocalDiceLoss', loss_weight=0.4, focal_weight=0.75)
+            _delete_=True, type='FocalLoss', loss_weight=0.4)
         ),
-    test_cfg=dict(mode='wwhole')
+    test_cfg=dict(mode='slide', crop_size=(128, 128), stride=(85, 85))
     )
 
 # in backbone

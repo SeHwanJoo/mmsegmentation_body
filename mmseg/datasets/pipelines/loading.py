@@ -148,6 +148,7 @@ class LoadAnnotations(object):
                 gt_semantic_seg[gt_semantic_seg == old_id] = new_id
         # reduce zero_label
         if self.tumor:
+            gt_semantic_seg[gt_semantic_seg == 1] = 0
             gt_semantic_seg[gt_semantic_seg == 2] = 1
         for index in self.ignore_index:
             gt_semantic_seg[gt_semantic_seg == index] = 255
